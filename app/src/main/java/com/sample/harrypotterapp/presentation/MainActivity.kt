@@ -46,7 +46,7 @@ fun NavHost(
         composable(
             route = Screen.CharacterListScreen.route
         ) {
-            CharacterListScreen(navController) { viewModel.selectNews(it) }
+            CharacterListScreen(navController) { viewModel.selectCharacter(it) }
         }
         composable(
             route = Screen.CharacterDetailScreen.route
@@ -56,6 +56,6 @@ fun NavHost(
     }
 
     viewModel.selectedCharacter?.let {
-        BackHandler { viewModel.unselectNews() }
+        BackHandler { viewModel.unselectCharacter() }
     }
 }

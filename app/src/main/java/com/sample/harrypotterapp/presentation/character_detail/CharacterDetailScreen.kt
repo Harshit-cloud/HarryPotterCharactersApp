@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.sample.harrypotterapp.R
-import com.sample.harrypotterapp.domain.model.Characters
+import com.sample.harrypotterapp.domain.model.CharacterModel
 import com.sample.harrypotterapp.presentation.character_detail.components.TableCell
 import com.sample.harrypotterapp.presentation.ui.theme.BackgroundDarkColor
 
@@ -99,7 +99,7 @@ fun CharacterDetailScreen(
 }
 
 @Composable
-fun TableScreen(characterModel: Characters) {
+fun TableScreen(characterModel: CharacterModel) {
 
     // Each cell of a column must have the same weight.
     val column1Weight = .3f // 30%

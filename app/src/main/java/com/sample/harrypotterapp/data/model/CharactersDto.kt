@@ -1,6 +1,6 @@
 package com.sample.harrypotterapp.data.model
 
-import com.sample.harrypotterapp.domain.model.Characters
+import com.sample.harrypotterapp.domain.model.CharacterModel
 
 
 data class CharactersDto(
@@ -26,8 +26,8 @@ data class CharactersDto(
     val yearOfBirth: Int? = null
 )
 
-fun CharactersDto.toCharacter(): Characters {
-    return Characters(
+fun CharactersDto.toCharacter(): CharacterModel {
+    return CharacterModel(
         actor,
         alive,
         ancestry,

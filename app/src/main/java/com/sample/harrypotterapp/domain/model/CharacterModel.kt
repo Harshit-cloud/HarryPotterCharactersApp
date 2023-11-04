@@ -1,6 +1,6 @@
 package com.sample.harrypotterapp.domain.model
 
-data class Characters(
+data class CharacterModel(
     val actor: String,
     val alive: Boolean,
     val ancestry: String,

@@ -39,7 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.sample.harrypotterapp.R
-import com.sample.harrypotterapp.domain.model.Characters
+import com.sample.harrypotterapp.domain.model.CharacterModel
 import com.sample.harrypotterapp.presentation.characters_list.components.MainAppBar
 import com.sample.harrypotterapp.presentation.characters_list.components.SearchWidgetState
 import com.sample.harrypotterapp.presentation.Screen
@@ -51,7 +51,7 @@ import com.sample.harrypotterapp.presentation.ui.theme.BackgroundDarkColorTwo
 fun CharacterListScreen(
     navController: NavController,
     viewModel: CharacterListViewModel = hiltViewModel(),
-    onSelect: (Characters) -> Unit
+    onSelect: (CharacterModel) -> Unit
 ) {
 
     val charactersState = viewModel.characters.value
@@ -154,8 +154,8 @@ fun CharacterListScreen(
 
 @Composable
 private fun CharacterCard(
-    data: Characters,
-    openCharacterDetails: (Characters) -> Unit
+    data: CharacterModel,
+    openCharacterDetails: (CharacterModel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Card(

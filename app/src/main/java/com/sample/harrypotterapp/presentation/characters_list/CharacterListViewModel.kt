@@ -11,9 +11,10 @@ import com.sample.harrypotterapp.presentation.characters_list.components.SearchW
 import com.sample.harrypotterapp.presentation.characters_list.state.CharacterListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +22,8 @@ class CharacterListViewModel @Inject constructor(
     private val getCharactersUseCase: GetCharactersUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+
+    private lateinit var job: Job
 
     private val _characters = mutableStateOf(CharacterListState())
     val characters: State<CharacterListState> = _characters
@@ -50,31 +53,42 @@ class CharacterListViewModel @Inject constructor(
             error = "",
             characters = emptyList()
         )
-        getCharactersUseCase().flowOn(ioDispatcher).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _characters.value = CharacterListState(
-                        characters = if (searchString.isEmpty()) {
-                            result.data ?: emptyList()
-                        } else {
-                            result.data?.filter { character ->
-                                character.name.contains(searchString, ignoreCase = true) || character.house?.contains(
-                                    searchString,
-                                    ignoreCase = true
-                                ) == true
-                            } ?: emptyList()
-                        }
-                    )
+        if (::job.isInitialized && job.isActive) {
+            job.cancel()
+        }
+        job = viewModelScope.launch(ioDispatcher) {
+            getCharactersUseCase().onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _characters.value = CharacterListState(
+                            characters = if (searchString.isEmpty()) {
+                                result.data ?: emptyList()
+                            } else {
+                                result.data?.filter { character ->
+                                    character.name.contains(
+                                        searchString,
+                                        ignoreCase = true
+                                    ) || character.house?.contains(
+                                        searchString,
+                                        ignoreCase = true
+                                    ) == true
+                                } ?: emptyList()
+                            }
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        _characters.value = CharacterListState(
+                            error = result.message ?: "An unexpected error occurred"
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        _characters.value = CharacterListState(isLoading = true)
+                    }
                 }
-                is Resource.Error -> {
-                    _characters.value = CharacterListState(
-                        error = result.message ?: "An unexpected error occurred"
-                    )
-                }
-                is Resource.Loading -> {
-                    _characters.value = CharacterListState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        }
+
     }
 }

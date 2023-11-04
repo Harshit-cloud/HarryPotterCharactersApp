@@ -1,7 +1,7 @@
 package com.sample.harrypotterapp.data.repository
 
 import com.sample.harrypotterapp.domain.common.Resource
-import com.sample.harrypotterapp.domain.model.Characters
+import com.sample.harrypotterapp.domain.model.CharacterModel
 import com.sample.harrypotterapp.data.model.toCharacter
 import com.sample.harrypotterapp.data.remote.CharactersApi
 import com.sample.harrypotterapp.domain.repository.CharactersRepository
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class CharactersRepositoryImpl @Inject constructor(private val api: CharactersApi) :
     CharactersRepository {
-    override fun getCharacters(): Flow<Resource<List<Characters>>> = flow {
+    override fun getCharacters(): Flow<Resource<List<CharacterModel>>> = flow {
         emit(Resource.Loading())
 
         try {

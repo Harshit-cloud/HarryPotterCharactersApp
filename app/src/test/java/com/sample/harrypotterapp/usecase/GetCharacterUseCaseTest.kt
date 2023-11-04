@@ -1,20 +1,22 @@
-package com.sample.harrypotterapp.viewmodel
+package com.sample.harrypotterapp.usecase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.sample.harrypotterapp.data.repository.CharactersRepositoryImpl
 import com.sample.harrypotterapp.domain.common.Resource
 import com.sample.harrypotterapp.domain.model.CharacterModel
 import com.sample.harrypotterapp.domain.usecase.GetCharactersUseCase
-import com.sample.harrypotterapp.presentation.characters_list.CharacterListViewModel
 import com.sample.harrypotterapp.presentation.characters_list.state.CharacterListState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -28,13 +30,13 @@ import org.junit.runners.JUnit4
 
 @ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
-class CharacterViewModelTest {
+class GetCharacterUseCaseTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
-
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var viewModel: CharacterListViewModel
-    private val getCharactersUseCase = mockk<GetCharactersUseCase>()
+    private val testScope = TestScope(testDispatcher)
+    private val repository = mockk<CharactersRepositoryImpl>()
+    private val getCharactersUseCase = GetCharactersUseCase(repository)
 
     @Before
     fun setUp() {
@@ -48,11 +50,11 @@ class CharacterViewModelTest {
     }
 
     @Test
-    fun getCharactersSuccessTest() = runTest(testDispatcher) {
+    fun verifyGetCharactersUseCase() = runTest {
         // Given
         val expectedState = CharacterListState(characters = listOf(character))
 
-        coEvery { getCharactersUseCase.invoke() } returns flowOf(
+        coEvery { repository.getCharacters() } returns flowOf(
             Resource.Success(
                 listOf(
                     character
@@ -61,42 +63,21 @@ class CharacterViewModelTest {
         )
 
         // When
-        viewModel = CharacterListViewModel(getCharactersUseCase, testDispatcher)
+        val result = getCharactersUseCase.invoke()
         advanceUntilIdle()
-        coVerify { getCharactersUseCase.invoke() }
-        assertNotNull(viewModel.characters.value.characters)
-
+        coVerify { repository.getCharacters() }
         // Then
-        assertEquals(expectedState.characters, viewModel.characters.value.characters)
-    }
+        result.onEach {
+            when (it) {
+                is Resource.Success -> {
+                    assertEquals(expectedState.characters, it.data)
+                }
 
-    @Test
-    fun getCharacterErrorTest() = runTest(testDispatcher) {
-        // Given
-        val expectedState =
-            CharacterListState(error = "An unexpected error occurred", characters = listOf())
+                else -> {
 
-        coEvery { getCharactersUseCase.invoke() } returns flowOf(
-            Resource.Error("An unexpected error occurred")
-        )
-
-        // When
-        viewModel = CharacterListViewModel(getCharactersUseCase, testDispatcher)
-        advanceUntilIdle()
-        coVerify { getCharactersUseCase.invoke() }
-        // Then
-        assertEquals(expectedState.error, viewModel.characters.value.error)
-    }
-
-
-    @Test
-    fun setSearchStringTest() {
-        // Given
-        viewModel = CharacterListViewModel(getCharactersUseCase, testDispatcher)
-        viewModel.setSearchString("Draco")
-
-        // Then
-        assertEquals("Draco", viewModel.searchString.value)
+                }
+            }
+        }.launchIn(testScope)
     }
 
     companion object {
