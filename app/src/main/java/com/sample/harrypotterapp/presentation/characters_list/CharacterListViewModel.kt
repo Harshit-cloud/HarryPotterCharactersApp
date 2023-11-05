@@ -11,7 +11,6 @@ import com.sample.harrypotterapp.presentation.characters_list.components.SearchW
 import com.sample.harrypotterapp.presentation.characters_list.state.CharacterListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -22,8 +21,6 @@ class CharacterListViewModel @Inject constructor(
     private val getCharactersUseCase: GetCharactersUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
-
-    private lateinit var job: Job
 
     private val _characters = mutableStateOf(CharacterListState())
     val characters: State<CharacterListState> = _characters
@@ -53,10 +50,8 @@ class CharacterListViewModel @Inject constructor(
             error = "",
             characters = emptyList()
         )
-        if (::job.isInitialized && job.isActive) {
-            job.cancel()
-        }
-        job = viewModelScope.launch(ioDispatcher) {
+
+        viewModelScope.launch(ioDispatcher) {
             getCharactersUseCase().onEach { result ->
                 when (result) {
                     is Resource.Success -> {

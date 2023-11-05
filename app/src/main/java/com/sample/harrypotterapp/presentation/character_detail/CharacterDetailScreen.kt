@@ -119,7 +119,7 @@ fun TableScreen(characterModel: CharacterModel) {
         // Here are all the lines of your table.
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "name", weight = column1Weight)
-            characterModel.name.let { it1 -> TableCell(text = it1, weight = column2Weight) }
+            TableCell(text = characterModel.name, weight = column2Weight)
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "species", weight = column1Weight)
@@ -127,7 +127,7 @@ fun TableScreen(characterModel: CharacterModel) {
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "gender", weight = column1Weight)
-            characterModel.gender.let { it1 -> TableCell(text = it1, weight = column2Weight) }
+            TableCell(text = characterModel.gender, weight = column2Weight)
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "house", weight = column1Weight)
@@ -147,7 +147,7 @@ fun TableScreen(characterModel: CharacterModel) {
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "ancestry", weight = column1Weight)
-            characterModel.ancestry.let { it1 -> TableCell(text = it1, weight = column2Weight) }
+            TableCell(text = characterModel.ancestry, weight = column2Weight)
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "eye colour", weight = column1Weight)
@@ -171,7 +171,7 @@ fun TableScreen(characterModel: CharacterModel) {
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "actor", weight = column1Weight)
-            characterModel.actor.let { it1 -> TableCell(text = it1, weight = column2Weight) }
+            TableCell(text = characterModel.actor, weight = column2Weight)
         }
         Row(Modifier.fillMaxWidth()) {
             TableCell(text = "alive", weight = column1Weight)

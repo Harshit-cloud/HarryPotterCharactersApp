@@ -28,7 +28,7 @@ import org.junit.runners.JUnit4
 
 @ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
-class CharacterViewModelTest {
+class CharacterListViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
